@@ -13,11 +13,13 @@ if (!$con) {
 mysql_query("set names 'utf8'");
 
 
-mysql_select_db($mysql_db1_database);
-   	$sql = "UPDATE `project_das`.`dis` SET `danger` = $_POST['danger'], `infection` = $_POST['infection'],
-   				`info` = $_POST['info'], `population` = $_POST['population'],`symptom` = $_POST['symptom'],
-				`prevention` = $_POST['prevention'],`treatment` = $_POST['treatment'] WHERE `dis`.`name` = $_POST['name'];";
+mysql_select_db($mysql_db_database);
 
+
+   	$sql = "UPDATE `project_das`.`dis` SET `danger` = ".$_POST["danger"].", `infection` = ".$_POST['infection'].",
+   				`info` = ".$_POST['info'].", `population` = ".$_POST['population'].",`symptom` = ".$_POST['symptom'].",
+				`prevention` = ".$_POST['prevention'].",`treatment` = ".$_POST['treatment']." WHERE `dis`.`name` = ".$_POST['name']."";
+	  // echo $sql;
     $result = mysql_query($sql) or die('MySQL query error');
     echo $result;
 ?>
