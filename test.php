@@ -20,7 +20,7 @@ try{
         #顯示所有疾病資料
             $tableName = $_POST['getdata'];
             // $disName = $_POST['disName'];
-            $sql = "Select * from $tableName";
+            $sql = "Select * from $tableName ";
             $result=$db->query($sql);
             // print_r($result);    
             // $row=$result->fetch(PDO::FETCH_OBJ);
@@ -31,6 +31,8 @@ try{
                 $json[$i]['disName'] = $row->disName;
                 $json[$i]['info'] = $row->info;
                 $json[$i]['symptomId'] = $row->symptomId; 
+                // $json[$i]['info'] = "‧‧‧‧‧‧";
+
                 
                 $i++;
             }
@@ -63,7 +65,7 @@ try{
                         break;
                     
                     case 'PE':
-                        $json[$i]['functionType'] = "偏方/個人經驗";
+                        $json[$i]['functionType'] = "相關建議";
                         break;
                 }
                 $json[$i]['srcID'] = $row->srcID;
@@ -119,6 +121,80 @@ try{
 
             break;
 
+        case 'pred':
+            $tableName = 'disease_symId';
+            $getvalue = $_POST['getvalue'];
+            $sql = "SELECT disName,COUNT(disName) as c FROM $tableName 
+                    WHERE symptomId in $getvalue GROUP BY disName HAVING c>=2";
+            $result=$db->query($sql);
+
+            while($row=$result->fetch(PDO::FETCH_OBJ)){    
+                // PDO::FETCH_OBJ 指定取出資料的型態
+
+                $json[$i]['disNam'] = $row->disName;
+
+                $json[$i]['count'] = $row->c;
+
+
+                
+                $i++;
+            }
+            echo json_encode($json);
+            break;
+        case 'symptom':
+        #顯示所有病徵
+            $tableName = $_POST['getdata'];
+            // $disName = $_POST['disName'];
+            $sql = "Select * from $tableName  ORDER BY `symptom`.`symptomId` ASC";
+            $result=$db->query($sql);
+            // print_r($result);    
+            // $row=$result->fetch(PDO::FETCH_OBJ);
+            // print_r($row);
+            while($row=$result->fetch(PDO::FETCH_OBJ)){    
+                //PDO::FETCH_OBJ 指定取出資料的型態
+
+                $json[$i]['symptomId'] = $row->symptomId;
+                $json[$i]['symptomName'] = $row->symptomName;
+                // $json[$i]['symptomId'] = $row->symptomId; 
+                // $json[$i]['info'] = "‧‧‧‧‧‧";
+
+                
+                $i++;
+            }
+            echo json_encode($json);
+            break;
+
+        case 'addrecord':
+            $tableName = "record";
+            $BP = $_POST['BP'];
+            $BG = $_POST['BG'];
+            $datetime = $_POST['datetime']."";
+            $sql = "INSERT INTO `record`(`no`, `BG`, `BP`, `datetime`) VALUES ('','$BG','$BP','$datetime')";
+            $result=$db->query($sql);
+            // print_r($result);
+            
+            if($result){
+                echo "success";
+            }
+            else{
+                echo "fail";
+            }
+            break; 
+        case 'advice':
+            // echo "123";
+            $tableName = "function";
+            $disName = $_POST['disName'];
+            $function = $_POST['function'];
+            $sql = "INSERT INTO `function`(`disName`, `function`, `functionType`) VALUES ('$disName','$function','PE')";
+            $result = $db->query($sql);
+            // print_r($result);
+            if($result){
+                echo "success";
+            }
+            else{
+                echo "fail";
+            }
+            break;
 // SELECT disName,COUNT(disName) as c FROM `disease_symId` WHERE symptomId in (1,2,3,4,6,8,9) GROUP BY disName HAVING c>=2
         
     }
